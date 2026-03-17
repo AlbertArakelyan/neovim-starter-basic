@@ -62,15 +62,17 @@ local plugins = {
     },
 
     -- LSP
-    -- { "neovim/nvim-lspconfig" },
+    { "neovim/nvim-lspconfig" },
+    { "williamboman/mason.nvim" },
+    { "williamboman/mason-lspconfig.nvim" },
 
     -- autocomplete
-    -- { "hrsh7th/nvim-cmp",
-    --  dependencies = {
-    --      "hrsh7th/cmp-nvim-lsp",
-    --      "L3MON4D3/LuaSnip",
-    --  },
-    -- },
+    { "hrsh7th/nvim-cmp",
+        dependencies = {
+            "hrsh7th/cmp-nvim-lsp",
+            "L3MON4D3/LuaSnip",
+        },
+    },
 }
 local opts = {}
 
@@ -95,6 +97,46 @@ require("bufferline").setup{}
 vim.keymap.set('n', '<Tab>', ':BufferLineCycleNext<CR>', {})
 vim.keymap.set('n', '<S-Tab>', ':BufferLineCyclePrev<CR>', {})
 vim.keymap.set('n', '<leader>x', ':bd<CR>', {})
+
+-- LSP setup
+require("mason").setup()
+require("mason-lspconfig").setup({
+    ensure_installed = {
+        "ts_ls",           -- JS/TS
+        "rust_analyzer",    -- Rust
+        "zls",              -- Zig
+        "lua_ls",           -- Lua
+        "html",             -- HTML
+        "cssls",            -- CSS
+        "clangd",           -- C/C++
+    },
+})
+
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+local servers = { "ts_ls", "rust_analyzer", "zls", "lua_ls", "html", "cssls", "clangd" }
+for _, server in ipairs(servers) do
+    vim.lsp.config(server, { capabilities = capabilities })
+end
+vim.lsp.enable(servers)
+
+-- autocomplete setup
+local cmp = require("cmp")
+cmp.setup({
+    snippet = {
+        expand = function(args)
+            require("luasnip").lsp_expand(args.body)
+        end,
+    },
+    mapping = cmp.mapping.preset.insert({
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    }),
+    sources = cmp.config.sources({
+        { name = "nvim_lsp" },
+        { name = "luasnip" },
+    }),
+})
 
 require("catppuccin").setup()
 vim.cmd.colorscheme "catppuccin"
