@@ -46,7 +46,13 @@ local plugins = {
         'nvim-treesitter/nvim-treesitter',
         lazy = false,
         build = ':TSUpdate'
-    }
+    },
+
+    -- file tree
+    {
+        "nvim-tree/nvim-tree.lua",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+    },
 
     -- LSP
     -- { "neovim/nvim-lspconfig" },
@@ -74,6 +80,9 @@ config.setup({
     highlight = { enable = true },
     indent = { enable = true }
 })
+
+require("nvim-tree").setup()
+vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', {})
 
 require("catppuccin").setup()
 vim.cmd.colorscheme "catppuccin"
