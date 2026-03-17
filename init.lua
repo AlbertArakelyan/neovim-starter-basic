@@ -54,6 +54,13 @@ local plugins = {
         dependencies = { "nvim-tree/nvim-web-devicons" },
     },
 
+    -- bufferline (tabs)
+    {
+        "akinsho/bufferline.nvim",
+        version = "*",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+    },
+
     -- LSP
     -- { "neovim/nvim-lspconfig" },
 
@@ -83,6 +90,11 @@ config.setup({
 
 require("nvim-tree").setup()
 vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', {})
+
+require("bufferline").setup{}
+vim.keymap.set('n', '<Tab>', ':BufferLineCycleNext<CR>', {})
+vim.keymap.set('n', '<S-Tab>', ':BufferLineCyclePrev<CR>', {})
+vim.keymap.set('n', '<leader>x', ':bd<CR>', {})
 
 require("catppuccin").setup()
 vim.cmd.colorscheme "catppuccin"
